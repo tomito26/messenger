@@ -1,7 +1,8 @@
  import { useState} from 'react'
  import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth,database } from '../firebase-config';
-import { setDoc,doc } from 'firebase/firestore';
+import { setDoc,doc, Timestamp } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom'
 
 const Register = () =>{
     const[data,setData] = useState({
@@ -11,11 +12,14 @@ const Register = () =>{
         error:null,
         loading:false
     })
+    const navigate = useNavigate();
+    
 
     const {name,email,password,error,loading} = data;
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
+        setData({...data,error:null,loading:true})
         if(!name && !email && !password){
             setData({...data,error:"All fields are required"});
         }
@@ -23,13 +27,23 @@ const Register = () =>{
             const result = await createUserWithEmailAndPassword(auth,email,password)
             const docRef = doc(database,"users",result.user.uid)
             const payload = {
-                name:name,
-                email:email,
-                password:password
+                name,
+                email,
+                createdAt: Timestamp.fromDate(new Date()),
+                isOnline:true
             }
             await setDoc(docRef,payload)
-        }catch(error){
-            setData({...data,error:error.message})
+            setData({
+                name:"",
+                email:"",
+                password:"",
+                error:null,
+                loading:false}
+            )
+            navigate('/')
+        }catch(err){
+            setData({...data,error:err.message,loading:false})
+        
         }
 
     };
@@ -71,7 +85,7 @@ const Register = () =>{
             </div>
             {error ? <p className='error'>{error}</p>: null}
             <div className="btn-container">
-                <input type="submit" value="Register" className="btn" />
+                <input type="submit" value="Register" disabled={loading} className="btn" />
             </div>
         </form>
     </section>
