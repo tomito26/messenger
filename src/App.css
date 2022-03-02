@@ -43,6 +43,7 @@ nav ul li{
 nav ul li .nav-link{
     text-decoration: none;
     color: var(--color-2);
+    font-size: 16px;
 
 }
 
