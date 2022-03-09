@@ -3,6 +3,7 @@
 import { auth,database } from '../firebase-config';
 import { setDoc,doc, Timestamp } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom'
+import { useUserContext } from "../context/auth"
 
 const Register = () =>{
     const[data,setData] = useState({
@@ -12,6 +13,7 @@ const Register = () =>{
         error:null,
         loading:false
     })
+    const { signUp } = useUserContext()
     const navigate = useNavigate();
     
 
@@ -24,15 +26,8 @@ const Register = () =>{
             setData({...data,error:"All fields are required"});
         }
         try{
-            const result = await createUserWithEmailAndPassword(auth,email,password)
-            const docRef = doc(database,"users",result.user.uid)
-            const payload = {
-                name,
-                email,
-                createdAt: Timestamp.fromDate(new Date()),
-                isOnline:true
-            }
-            await setDoc(docRef,payload)
+            const result = await signUp(email,password)
+            
             setData({
                 name:"",
                 email:"",

@@ -3,6 +3,7 @@ import { auth,database } from '../firebase-config';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import {doc, updateDoc } from 'firebase/firestore';
+import { useUserContext } from '../context/auth';
 const Login = () =>{
     const[data,setData] = useState({
         email:"",
@@ -14,6 +15,7 @@ const Login = () =>{
     
 
     const {email,password,error,loading} = data;
+    const { logIn } = useUserContext()
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
@@ -22,7 +24,7 @@ const Login = () =>{
             setData({...data,error:"All fields are required"});
         }
         try{
-            const result = await signInWithEmailAndPassword(auth,email,password)
+            const result = await logIn(email,password)
             const docRef = doc(database,"users",result.user.uid)
             const payload = {
                 isOnline:true

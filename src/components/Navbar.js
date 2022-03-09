@@ -1,12 +1,11 @@
-import { signOut } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/auth';
+import {  useUserContext } from '../context/auth';
 import { auth, database } from '../firebase-config';
 
 const Navbar = () =>{
-    const { user } = useContext(AuthContext);
+    const { user,logOut } = useUserContext();
+
     const navigate = useNavigate();
     const handleSignOut = async () =>{
         console.log(auth.currentUser.uid)
@@ -15,7 +14,7 @@ const Navbar = () =>{
             isOnline:false
         }
         await updateDoc(docRef,payload)
-        await signOut(auth);
+        await logOut();
         navigate("/login")
 
     }
