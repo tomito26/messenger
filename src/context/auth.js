@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) =>{
         return signInWithEmailAndPassword(auth,email,password);
     }
 
-    function signUp(auth,email,password){
+    function signUp(email,password){
         return createUserWithEmailAndPassword(auth,email,password);
     }
     function logOut(){

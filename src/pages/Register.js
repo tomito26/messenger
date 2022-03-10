@@ -27,6 +27,14 @@ const Register = () =>{
         }
         try{
             const result = await signUp(email,password)
+            const docRef = doc(database,"users",result.user.uid);
+            const payload = {
+                name:name,
+                email:email,
+                createdAt:Timestamp.fromDate(new Date()),
+                isOnline:true
+            }
+            await setDoc(docRef,payload);
             
             setData({
                 name:"",
