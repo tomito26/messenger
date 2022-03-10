@@ -2,12 +2,15 @@ import img  from '../avatar.png'
 import { useEffect, useState } from 'react';
 import Camera from '../components/svg/Camera';
 import { storage,database, auth } from '../firebase-config';
-import { ref,getDownloadURL,uploadBytes } from 'firebase/storage'
+import { ref,getDownloadURL,uploadBytes,deleteObject } from 'firebase/storage'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import Delete from '../components/svg/Delete';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () =>{
     const[image,setImage] = useState('')
     const [user,setUser] = useState({})
+    const navigate = useNavigate()
     useEffect(()=>{
         getDoc(doc(database,"users",auth.currentUser.uid)).then(docSnap=>{
             if(docSnap.exists){
@@ -18,6 +21,9 @@ const Profile = () =>{
             const uploadingImage = async ()=>{
                 const imgRef = ref(storage,`avatar/${new Date().getTime()} - ${image.name}`)
                 try{
+                    if(user.avatar){
+                        await deleteObject(ref(storage,user.avatarPath))
+                    }
                     const snap = await uploadBytes(imgRef,image)
                     const url = await getDownloadURL(ref(storage, snap.ref.fullPath))
                     await updateDoc(doc(database,"users",auth.currentUser.uid),{
@@ -33,7 +39,20 @@ const Profile = () =>{
             uploadingImage()
         }
     },[image])
-    console.log(user)
+    const deleteImage = async ()=>{
+        const confirm = window.confirm("Delete avatar?");
+        
+        if(confirm){
+            await deleteObject(ref(storage,user.avatarPath))
+
+            await updateDoc(doc(database,"users",auth.currentUser.uid),{
+                avatar:"",
+                avatarPath:""
+            })
+            navigate("/")
+        }
+
+    }
    
     return (
     <section>
@@ -44,6 +63,7 @@ const Profile = () =>{
                     <label htmlFor="photo">
                         <Camera/>
                     </label>
+                    {user.avatar ? <Delete deleteImage={deleteImage}/> : null}
                     <input type="file" accept='image/*' style={{display:"none"}} id="photo"  onChange={e=>setImage(e.target.files[0])}/>
                 </div>
             </div>
