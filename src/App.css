@@ -100,3 +100,45 @@ section .form{
     color: var(--color-5);
     margin: 10px 0;
 }
+/* profile */
+.profile-container{
+    display: flex;
+    align-items: center;
+    margin: 10px;
+}
+.image-container{
+    position: relative;
+    margin-right: 20px;
+}
+.image-container img{
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    border: 1px solid var(--color-4);
+    transition: 0.5s ease-in-out all;
+    object-fit: cover;
+}
+.image-container:hover img{
+    opacity: 0.4;
+}
+.image-container:hover .overlay{
+    opacity: 1;
+}
+.overlay{
+    transition: 00.5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+}
+.text-container {
+    flex-grow: 1;
+}
+.text-container h3{
+    text-align: left;
+}
+.text-container hr{
+    margin: 10px 0;
+}
