@@ -41,6 +41,7 @@ const Profile = () =>{
         return ()=>unsub();
     },[image])
     console.log(user)
+    
     const deleteImage = async ()=>{
         const confirm = window.confirm("Delete avatar?");
         
