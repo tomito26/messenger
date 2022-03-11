@@ -38,8 +38,9 @@ const Profile = () =>{
                 setUser(snap.data())
             }
         })
-        return ()=> unsub();
+        return ()=>unsub();
     },[image])
+    console.log(user)
     const deleteImage = async ()=>{
         const confirm = window.confirm("Delete avatar?");
         
