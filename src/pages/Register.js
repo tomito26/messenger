@@ -29,6 +29,7 @@ const Register = () =>{
             const result = await signUp(email,password)
             const docRef = doc(database,"users",result.user.uid);
             const payload = {
+                uid:result.user.uid,
                 name:name,
                 email:email,
                 createdAt:Timestamp.fromDate(new Date()),
@@ -41,7 +42,8 @@ const Register = () =>{
                 email:"",
                 password:"",
                 error:null,
-                loading:false}
+                loading:false
+            }
             )
             navigate('/')
         }catch(err){

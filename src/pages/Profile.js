@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Camera from '../components/svg/Camera';
 import { storage,database, auth } from '../firebase-config';
 import { ref,getDownloadURL,uploadBytes,deleteObject } from 'firebase/storage'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore'
 import Delete from '../components/svg/Delete';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,12 +11,7 @@ const Profile = () =>{
     const[image,setImage] = useState('')
     const [user,setUser] = useState({})
     const navigate = useNavigate()
-    useEffect(()=>{
-        getDoc(doc(database,"users",auth.currentUser.uid)).then(docSnap=>{
-            if(docSnap.exists){
-                setUser(docSnap.data())
-            }
-        })
+    useEffect(()=>{        
         if(image){
             const uploadingImage = async ()=>{
                 const imgRef = ref(storage,`avatar/${new Date().getTime()} - ${image.name}`)
@@ -38,6 +33,12 @@ const Profile = () =>{
             }
             uploadingImage()
         }
+        const unsub = onSnapshot(doc(database,"users",auth.currentUser.uid),(snap)=>{
+            if(snap.exists){
+                setUser(snap.data())
+            }
+        })
+        return ()=> unsub();
     },[image])
     const deleteImage = async ()=>{
         const confirm = window.confirm("Delete avatar?");
