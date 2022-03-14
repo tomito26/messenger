@@ -1,15 +1,17 @@
 import { useEffect,useState } from 'react'
 import { ref,uploadBytes,getDownloadURL} from 'firebase/storage'
 import { database,auth, storage } from "../firebase-config";
-import { query,onSnapshot,collection, where, addDoc, Timestamp  } from "firebase/firestore"
+import { query,onSnapshot,collection, where, addDoc, Timestamp, orderBy  } from "firebase/firestore"
 import User from '../components/User';
 import MessageForm from '../components/MessageForm';
+import Message from '../components/Message';
 
 const Home = () => {
   const[users,setUsers] = useState([]);
   const [chat,setChat] = useState("");
   const[text,setText] = useState("");
-  const[image,setImage] = useState("")
+  const[image,setImage] = useState("");
+  const [messages,setMessages] = useState([])
 
 
   const user1 = auth.currentUser.uid;
@@ -30,12 +32,23 @@ const Home = () => {
   // console.log(users)
   const selectedUser = (user)=>{
     setChat(user)
-    console.log(chat)
+    const user2 = user.uid;
+    const id = user1 > user2 ? `${user1+user2}`:`${user2+user1}`;
+    const messsageRef = collection(database,"messages",id,"chat");
+    const q = query(messsageRef,orderBy("createdAt","asc"));
+    onSnapshot(q,snap=>{
+      let messages = []
+      snap.forEach(doc=>{
+        messages.push(doc.data());
+      })
+      setMessages(messages)
+    })
+
   }
   const handleSubmit = async (e)=>{
     e.preventDefault();
     const user2 = chat.uid;
-    const id = user1 > user2 ? `${user1+user2}`:`${user2+user1}`
+    const id = user1 > user2 ? `${user1+user2}`:`${user2+user1}`;
     let url;
   
     if(image){
@@ -55,7 +68,7 @@ const Home = () => {
     setText("")
   
   };
-  console.log(image)
+  console.log(messages)
   
   return (
     <div className='home-container'>
@@ -69,6 +82,9 @@ const Home = () => {
               <>
                 <div className='messages-user'>
                   {chat.name}
+                </div>
+                <div className="messages">
+                  { messages.length ? messages.map((message,i)=> <Message key={i} message={message} user1={user1}/>): null}
                 </div>
                 <MessageForm 
                   handleSubmit={handleSubmit} 
