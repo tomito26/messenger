@@ -198,10 +198,21 @@ section .form{
     margin-top: 10px;
 }
 .messages-user{
-    padding: 20px;
+    display: flex;
+    justify-content: center;
+    padding: 5px;
     text-align: center;
     border-bottom: 2px solid var(--color-6) ;
 }
+.messages-user .avatar{
+    height: 40px;
+    width: 40px;
+}
+.messages-user p{
+    margin-left: 10px;
+    line-height: 40px;
+}
+
 .no-conv{
     font-size: 20px;
     color: var(--color-4);
@@ -265,4 +276,24 @@ section .form{
 }
 .friend{
     background-color: var(--color-6);
+}
+.selected-user{
+    background-color: var(--color-6);
+}
+.truncate{
+    font-size: 14px;
+    white-space: nowrap;
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 10px;
+}
+.truncate strong{
+    margin:0 10px 0 15px;
+}
+.unread{
+    margin-left: 10px;
+    background-color: var(--color-3);
+    padding: 2px 4px;
+    border-radius: 10px;
 }

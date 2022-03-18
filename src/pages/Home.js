@@ -1,10 +1,12 @@
 import { useEffect,useState } from 'react'
 import { ref,uploadBytes,getDownloadURL} from 'firebase/storage'
 import { database,auth, storage } from "../firebase-config";
-import { query,onSnapshot,collection, where, addDoc, Timestamp, orderBy  } from "firebase/firestore"
+import { query,onSnapshot,collection, where, addDoc, Timestamp, orderBy, setDoc,doc, getDoc, updateDoc  } from "firebase/firestore"
 import User from '../components/User';
 import MessageForm from '../components/MessageForm';
 import Message from '../components/Message';
+import Img from '../avatar.png';
+import { async } from '@firebase/util';
 
 const Home = () => {
   const[users,setUsers] = useState([]);
@@ -30,7 +32,7 @@ const Home = () => {
     
   },[])
   // console.log(users)
-  const selectedUser = (user)=>{
+  const selectedUser =async (user)=>{
     setChat(user)
     const user2 = user.uid;
     const id = user1 > user2 ? `${user1+user2}`:`${user2+user1}`;
@@ -42,7 +44,12 @@ const Home = () => {
         messages.push(doc.data());
       })
       setMessages(messages)
-    })
+    });
+
+    const docSnap = await getDoc(doc(database,"lastMessage",id));
+    if(docSnap?.data().from !== user1 ){
+      await updateDoc(doc(database,"lastMessage",id),{unread:false});
+    }
 
   }
   const handleSubmit = async (e)=>{
@@ -65,15 +72,24 @@ const Home = () => {
       createdAt:Timestamp.fromDate(new Date()),
       media:url || ""
     });
+    await setDoc(doc(database,"lastMessage",id),{
+      text,
+      from:user1,
+      to:user2,
+      createdAt:Timestamp.fromDate(new Date()),
+      media:url || "",
+      unread:true
+    })
     setText("")
   
   };
-  console.log(messages)
+  console.log(chat)
+
   
   return (
     <div className='home-container'>
         <div className="users-container">
-          {users.map(user=> <User key={user.uid} user={user} selectedUser={selectedUser} />)}
+          {users.map(user=> <User key={user.uid} user={user} selectedUser={selectedUser} user1={user1} chat={chat} />)}
         </div>
         <div className="messages-container">
           {
@@ -81,10 +97,11 @@ const Home = () => {
               :
               <>
                 <div className='messages-user'>
-                  {chat.name}
+                  <img className='avatar' src={chat.avatar || Img} alt="" />
+                  <p>{chat.name}</p>
                 </div>
                 <div className="messages">
-                  { messages.length ? messages.map((message,i)=> <Message key={i} message={message} user1={user1}/>): null}
+                  { messages.length ? messages.map((message,i)=> <Message key={i} message={message} user1={user1} />): null}
                 </div>
                 <MessageForm 
                   handleSubmit={handleSubmit} 
