@@ -14,27 +14,32 @@ const User = ({ user,selectedUser,user1,chat })=>{
     // console.log(data)
     console.log(chat)
     return(
-    <div className={`user-wrapper ${chat !== undefined && chat.name === user.name ? "selected-user" : ""}`} onClick={()=>selectedUser(user)}>
-        <div className="user-info">
-            <div className="user-detail">
-                <img src={user.avatar || Img} alt="user avatar" className='avatar' />
-                <h4>{ user.name }</h4>
-                {data !== undefined && data.from !== user1 && data.unread ===true ? (
-                    <small className='unread'>New</small>
-                ):null}
+    <>
+        <div className={`user-wrapper ${chat !== undefined && chat.name === user.name ? "selected-user" : ""}`} onClick={()=>selectedUser(user)}>
+            <div className="user-info">
+                <div className="user-detail">
+                    <img src={user.avatar || Img} alt="user avatar" className='avatar' />
+                    <h4>{ user.name }</h4>
+                    {data !== undefined && data.from !== user1 && data.unread ===true ? (
+                        <small className='unread'>New</small>
+                    ):null}
+                </div>
+                <div className={ `user-status ${user.isOnline ? "online" : "offline"} `}></div>
             </div>
-            <div className={ `user-status ${user.isOnline ? "online" : "offline"} `}></div>
-        </div>
-        
-        {data && (
-            <p className='truncate'>
-                <strong>{data.from === user1 ? "Me:" : null}</strong>
-                {data.text}
-                
-            </p>
-        )}
+            
+            {data && (
+                <p className='truncate'>
+                    <strong>{data.from === user1 ? "Me:" : null}</strong>
+                    {data.text}
+                    
+                </p>
+            )}
 
-    </div>
+        </div>
+        <div  onClick={()=>selectedUser(user)}  className={`sm-container ${chat !== undefined && chat.name === user.name ? "selected-user" : ""}`}>
+            <img src={user.avatar || Img} alt="user avatar" className='avatar sm-screen' />
+        </div>
+    </>
     );
 }
 export default User;

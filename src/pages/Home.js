@@ -45,9 +45,11 @@ const Home = () => {
       })
       setMessages(messages)
     });
-
+    // get last message between the user and selected user 
     const docSnap = await getDoc(doc(database,"lastMessage",id));
-    if(docSnap?.data().from !== user1 ){
+    // if last message exists and is from selected users
+    if(docSnap.data() && docSnap.data().from !== user1 ){
+      // update the last message doc and set unread to false
       await updateDoc(doc(database,"lastMessage",id),{unread:false});
     }
 
@@ -87,6 +89,7 @@ const Home = () => {
 
   
   return (
+    
     <div className='home-container'>
         <div className="users-container">
           {users.map(user=> <User key={user.uid} user={user} selectedUser={selectedUser} user1={user1} chat={chat} />)}

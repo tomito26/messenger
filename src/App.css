@@ -297,3 +297,49 @@ section .form{
     padding: 2px 4px;
     border-radius: 10px;
 }
+.sm-screen{
+    display: none;
+}
+@media screen and (max-width:767px) {
+    .home-container{
+        grid-template-columns: 2fr 3fr;
+    }
+    .message-form{
+        left: 3%;
+        right: 0;
+    }
+    .message-wrapper p{
+        max-width: 75px;
+    }
+    
+}
+@media screen and (max-width:576px){
+    .home-container{
+        grid-template-columns: 1fr 5fr;
+    }
+    .user-wrapper{
+        display: none;
+    }
+    .sm-container{
+        padding: 10px 0;
+        text-align: center;
+        cursor: pointer;
+    }
+    .sm-screen{
+        display: inline-block;
+    }
+    .message-form  .form-control{
+        width: 50vw;
+        margin: 0 10px;
+    }
+    .message-wrapper p{
+        max-width: 100%;
+    }
+    section{
+        max-width: 400px;
+    }
+    .profile-container{
+        justify-content: center;
+        flex-direction: column;
+    }
+}
